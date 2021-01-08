@@ -31,42 +31,37 @@ class Array():
 		if index > self.size and index < 0:
 			raise IndexError('Out of range')
 
-		oldArr = copy.copy(self.arr)
-		del self.arr
-		self.arr = []
 		self.size += 1
 
 		arrTemp = self.create_array(self.size)
 
-		for i in range(self.size):
-			if i == index:
-				j = i
-				for j in range(i, self.size):
-					arrTemp[j] = oldArr[j - 1]
+		for i in range(index):
+			arrTemp[i] = self.arr[i]
 
-				arrTemp[i] = item
-				break
+		for j in range(index, self.size):
+			arrTemp[j] = self.arr[j - 1]
 
-			#print(arrTemp, oldArr)
-			arrTemp[i] = oldArr[i]
+		arrTemp[index] = item
 
+		del self.arr
 		self.arr = arrTemp
-		print(self.arr)
 
 
 	def delete(self, index):
 		if index > self.size and index < 0:
 			raise IndexError('Out of range')
 
-		oldArr = copy.copy(self.arr)
-		del self.arr
-		self.arr = []
 		self.size -= 1
 
-		arrTemp0 = oldArr[:index + 1]
-		arrTemp1 = oldArr[index + 1:]
-		arrTemp0.pop(index)
-		self.arr = arrTemp0 + arrTemp1 
+		arrTemp = self.create_array(self.size)
+		for i in range(index):
+			arrTemp[i] = self.arr[i]
+
+		for j in range(index, self.size):
+			arrTemp[j] = self.arr[j + 1]
+
+		del self.arr
+		self.arr = arrTemp
 
 
 	def create_array(self, size):
