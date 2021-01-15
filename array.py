@@ -149,6 +149,6 @@ def test_array_search():
 	print("Test (search) completed")
 
 
-test_array_insert()
-test_array_delete()
-test_array_search()
+#test_array_insert()
+#test_array_delete()
+#test_array_search()
