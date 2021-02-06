@@ -11,7 +11,7 @@ class LinkedList():
 
 
 	def insertToTheEnd(self, item):
-		self.__checkLoop()
+		self.__checkLoop(self.__count)
 		node = self.head
 		newNode = Node(item)
 		self.__count += 1
@@ -36,10 +36,10 @@ class LinkedList():
 
 
 	def insertToTheMiddle(self, item):
-		self.__checkLoop()
 		if self.head != None:
-			newNode = Node(item)
 			tempCount = self.__count / 2
+			self.__checkLoop(int(tempCount))
+			newNode = Node(item)
 			node = self.head
 			for i in range(int(tempCount) - 1):
 				node = node.nextNode
@@ -54,10 +54,17 @@ class LinkedList():
 
 	def insertAfterItem(self, item, itemAfter):
 		node = self.head
-		self.__checkLoop()
 		newNode = Node(item)
 
 		if node:
+			result = self.search(itemAfter)
+			if result == None:
+				raise AttributeError("Item not found")
+
+			#self.__checkLoop(result[1])
+			newNode.nextNode = result[0].nextNode
+			result[0].nextNode = newNode
+			'''
 			for i in range(self.__count):
 				if node.item == itemAfter:
 					newNode.nextNode = node.nextNode
@@ -65,6 +72,7 @@ class LinkedList():
 					break
 
 				node = node.nextNode
+			'''
 
 		else:
 			raise IndexError("List is empty")
@@ -72,8 +80,11 @@ class LinkedList():
 
 	def insertBeforeItem(self, item, itemBefore):
 		node = self.head
-		self.__checkLoop()
 		if node:
+			result = self.search(itemBefore)
+			if result == None:
+				raise AttributeError("Item not found")
+
 			newNode = Node(item)
 
 			if node.item == itemBefore:
@@ -81,13 +92,11 @@ class LinkedList():
 				self.head = newNode
 				return
 
-			for i in range(self.__count):
-				if node.nextNode.item == itemBefore:
-					newNode.nextNode = node.nextNode
-					node.nextNode = newNode
-					break
-
+			for i in range(result[1] - 1):
 				node = node.nextNode
+
+			newNode.nextNode = node.nextNode
+			node.nextNode = newNode
 
 		else:
 			raise IndexError("List is empty")
@@ -95,8 +104,8 @@ class LinkedList():
 
 	def deleteFirstElement(self):
 		node = self.head
-		self.__checkLoop()
 		if node:
+			self.__checkLoop()
 			self.head = node.nextNode
 			self.__count -= 1
 
@@ -106,8 +115,8 @@ class LinkedList():
 
 	def deleteLastElement(self):
 		node = self.head
-		self.__checkLoop()
 		if node:
+			self.__checkLoop(self.__count)
 			for i in range(self.__count - 2):
 				node = node.nextNode
 
@@ -120,9 +129,9 @@ class LinkedList():
 
 	def deleteCentralElement(self):
 		node = self.head
-		self.__checkLoop()
 		if node:
 			tempCount = self.__count / 2
+			self.__checkLoop(int(tempCount))
 			for i in range(int(tempCount) - 2):
 				node = node.nextNode
 
@@ -134,34 +143,51 @@ class LinkedList():
 
 
 	def search(self, item):
-		node = self.head
-		self.__checkLoop()
+		if self.head:
+			node = self.head
+			tempList = [None] * (self.__count - 1)
 
-		while node:
-			if node.item == item:
-				return node
+			if node.nextNode == node:
+				raise IndexError("List is wrong")
 
-			node = node.nextNode
+			elif node.item == item:
+				return (node, 0)
 
-		return None
+			for i in range(self.__count - 1):
+				tempList[i] = node
+				node = node.nextNode
+				if node.item == item:
+					return (node, i + 1)
+
+				for j in range(len(tempList)):
+					if tempList[j] == node:
+						raise IndexError("List is wrong") 
+
+
+			return None
+
+		else:
+			raise IndexError("List is empty")
 
 
 	def forEach(self, callback):
-		self.__checkLoop()
-		node = self.head
-		while node:
-			callback(node.item)
-			node = node.nextNode
+		if self.head:
+			node = self.head
+			while node:
+				callback(node)
+				node = node.nextNode
+
+		else:
+			raise IndexError("List is empty")
 
 
 	def index(self, index):
-		node = self.head
-		self.__checkLoop()
+		if self.head:
+			node = self.head
 
-		if index > self.__count:
-			raise IndexError("Out of range")
+			if index > self.__count:
+				raise IndexError("Out of range")
 
-		if node:
 			for i in range(index):
 				node = node.nextNode
 
@@ -171,18 +197,27 @@ class LinkedList():
 			raise IndexError("List is empty")
 
 
-	def __checkLoop(self):
+	def __checkLoop(self, index = 0):
 		node = self.head
-		tempList = []
+		if node == None:
+			return
 
-		while node:
-			if node in tempList:
-				raise IndexError("List is wrong")
+		elif node.nextNode == None:
+			return
 
-			tempList.append(node)
+		i = 0
+		if index == 0:
+			index += 1
+
+		tempList = [None] * index
+		while i != index:
+			tempList[i] = node
 			node = node.nextNode
+			for j in range(len(tempList)):
+				if tempList[j] == node:
+					raise IndexError("List is wrong")
 
-		return
+			i += 1
 
 
 	def printList(self):
@@ -267,13 +302,16 @@ def testSearch():
 	# 10, 0, 9, 1, 2
 
 	nodeWithItem = linkedlist.search(9)
-	assert nodeWithItem.item == 9, "nodeWithItem.item should be equal 9"
+	assert nodeWithItem[0].item == 9, "nodeWithItem[0].item should be equal 9"
+	assert nodeWithItem[1] == 2, "nodeWithItem[1] should be equal 4 "
 
 	nodeWithItem = linkedlist.search(10)
-	assert nodeWithItem.item == 10, "nodeWithItem.item should be equal 10"
+	assert nodeWithItem[0].item == 10, "nodeWithItem.item should be equal 10"
+	assert nodeWithItem[1] == 0, "nodeWithItem[1] should be equal 0"
 
 	nodeWithItem = linkedlist.search(2)
-	assert nodeWithItem.item == 2, "nodeWithItem.item should be equal 2"
+	assert nodeWithItem[0].item == 2, "nodeWithItem[0].item should be equal 2"
+	assert nodeWithItem[1] == 4, "nodeWithItem[1] should be equal 4"
 
 	nodeWithItem = linkedlist.search(50)
 	assert nodeWithItem == None, "nodeWithItem should be equal None, item not found" 
@@ -302,7 +340,41 @@ def testIndex():
 	print("Test (index) completed")
 
 
-testInsert()
-testDelete()
-testSearch()
-testIndex()
+def testLoop():
+	linkedlist = LinkedList()
+
+	linkedlist.insertToTheEnd(0)
+	linkedlist.insertToTheStart(1)
+	linkedlist.insertToTheMiddle(2)
+	linkedlist.insertAfterItem(3, 1)
+	linkedlist.insertBeforeItem(4, 1)
+	# 4, 1, 3, 2, 0
+
+	try:
+		node = linkedlist.head
+		node.nextNode = node
+		linkedlist.insertToTheEnd(5)
+		linkedlist.insertAfterItem(5, 2)
+		raise AssertionError("linkedlist.insertToTheEnd have to call except")
+
+	except IndexError:
+		pass
+
+	try:
+		node = linkedlist.head
+		node.nextNode.nextNode.nextNode.nextNode.nextNode = node.nextNode
+		linkedlist.insertToTheEnd(5)
+		linkedlist.insertAfterItem(5, 2)
+		raise AssertionError("linkedlist.insertToTheEnd have to call except")
+
+	except IndexError:
+		pass
+		
+	print("Test (loop) completed")
+
+
+#testInsert()
+#testDelete()
+#testSearch()
+#testIndex()
+#testLoop()
