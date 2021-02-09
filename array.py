@@ -364,4 +364,4 @@ def testMemory():
 #testDelete()
 #testSearch()
 #testMisc()
-testMemory()
+#testMemory()
