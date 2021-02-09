@@ -17,7 +17,7 @@ class Array():
 			self.__sizeOfBuffer = 400
 
 		else:
-			self.__arr = [None] * (size * 1.5)
+			self.__arr = [None] * (size + 100)
 			self.__sizeOfBuffer = len(self.__arr)
 
 		self.size = 0
@@ -48,7 +48,7 @@ class Array():
 			self.size += 1
 			return
 
-		elif self.__arr[len(self.__arr) - 1] != None:
+		elif len(self.__arr) - 1 == self.__lastElement:
 			self.__newArray()
 
 		self.size += 1
@@ -106,7 +106,7 @@ class Array():
 			self.size += 1
 			return
 
-		elif self.__arr[len(self.__arr) - 1] != None:
+		if self.__sizeOfBuffer - 1 == self.__lastElement:
 			self.__newArray()
 
 		self.__lastElement += 1
@@ -138,13 +138,19 @@ class Array():
 		self.__arr[self.__firstElement] = None
 		self.__firstElement += 1
 
+		if self.__sizeOfBuffer > 100 and 0 - self.__firstElement < -100:
+			self.__memoryLeak("left")
+
 	def pop(self):
 		if self.__lastElement == -1:
 			raise IndexError("Out of range")
-
+		
 		self.__arr[self.__lastElement] = None
 		self.size -= 1
 		self.__lastElement -= 1
+
+		if self.__sizeOfBuffer > 100 and self.__sizeOfBuffer - self.__lastElement > 100:
+			self.__memoryLeak("right")
 
 
 	def index(self, index):
@@ -153,7 +159,7 @@ class Array():
 
 		return self.__arr[self.__firstElement + index]
 
-	def replace(self, index, item):
+	def setIndex(self, index, item):
 		if index < self.__firstElement or index > self.__lastElement:
 			raise IndexError("Out of range")
 
@@ -169,13 +175,28 @@ class Array():
 
 
 	def __newArray(self):
-		if self.__sizeOfBuffer >= 400:
-			self.__sizeOfBuffer += 100
-			self.__arr += [None] * 100
+		newArr = [None] * (self.__sizeOfBuffer + 100)
+		for i in range(self.__firstElement, self.__lastElement + 1):
+			newArr[i] = self.__arr[i]
+		
+		self.__arr = newArr
+		self.__sizeOfBuffer += 100
+		del newArr
 
-		else:
-			self.__arr += [None] * self.__sizeOfBuffer
-			self.__sizeOfBuffer *= 2
+	
+	def __memoryLeak(self, side):
+		if side == "right":
+			i = self.__sizeOfBuffer - 100
+			while self.__sizeOfBuffer != i:
+				self.__sizeOfBuffer -= 1
+				del self.__arr[i]
+		
+		elif side == "left":
+			for i in range(100):
+				del self.__arr[0]
+
+			self.__firstElement -= 100
+			self.__sizeOfBuffer -= 100
 
 
 def filling(arr):
@@ -275,10 +296,10 @@ def testMisc():
 	# 3
 	assert item == 3, "item should be equal 3, index"
 
-	arr.replace(2, 10)
+	arr.setIndex(2, 10)
 	# 1, 2, 10, 4, 5, 6
-	assert arr._Array__arr[2] == 10, "arr._Array__arr[2] should be equal 10, replace"
-	assert arr.size == 6, "arr.size should be equal 6, replace"
+	assert arr._Array__arr[2] == 10, "arr._Array__arr[2] should be equal 10, setIndex"
+	assert arr.size == 6, "arr.size should be equal 6, setIndex"
 
 	arr.popStart()
 	# 2, 10, 4, 5, 6
@@ -292,7 +313,55 @@ def testMisc():
 	print("Test (misc) completed")
 
 
+def testMemory():
+	#Memory leak (right side)
+	arr = Array(150)
+
+	filling(arr)
+
+	for i in range(100):
+		arr.append(i + 1)
+	
+	for i in range(20):
+		arr.pop()
+
+	assert arr._Array__sizeOfBuffer == 100, "arr._Array__sizeOfBuffer should be equal 100, memory lick (right side)"
+	assert arr.index(85) == 80, "arr.index(85) should be equal 86, memory lick (right side)"
+
+	#New array
+	arr = Array(10)
+
+	for i in range(200):
+		arr.append(i + 1)
+	
+	arr.insert(1000, 0)
+
+	assert arr.index(0) == 1000, "arr.index(0) should be equal 1000, new array"
+	assert arr._Array__sizeOfBuffer == 250, "arr._Array_sizeOfBuffer should be equal 250, new array"
+
+	for i in range(1, 201):
+		assert arr._Array__arr[i] == i, f"arr._Array__arr[{i}] = {arr._Array__arr[i]}, i = {i}"
+
+	assert arr._Array__firstElement == 0, "arr._Array__firstElement should be equal 0, new array"
+	assert arr._Array__lastElement == 200, "arr._Array__firstElement should be equal 149, new array"
+
+	#Memory leak (left side)
+	arr = Array(200)
+
+	for i in range(200):
+		arr.append(i + 1)
+
+	for i in range(120):
+		arr.popStart()
+
+	assert arr._Array__firstElement == 20, "arr._Array__firstElement should be equal 19"
+	assert arr._Array__sizeOfBuffer == 100, "arr._Array__sifeOfBuffer should be equal 100"
+
+	print("Test (memory) completed")
+
+
 #testInsert()
 #testDelete()
 #testSearch()
 #testMisc()
+testMemory()
