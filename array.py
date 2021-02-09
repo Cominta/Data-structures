@@ -181,13 +181,8 @@ class Array():
 
 
 	def __newArray(self):
-		newArr = [None] * (self.__sizeOfBuffer + 100)
-		for i in range(self.__firstElement, self.__lastElement + 1):
-			newArr[i] = self.__arr[i]
-		
-		self.__arr = newArr
 		self.__sizeOfBuffer += 100
-		del newArr
+		self.__arr += [None] * 100
 
 	
 	def __memoryLeak(self, side):
