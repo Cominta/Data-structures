@@ -67,7 +67,7 @@ class Array():
 
 	def delete(self, index):
 		if index > self.__lastElement or index < 0:
-			raise IndexError('Out of range')
+		    raise IndexError('Out of range')
 
 		if index == 0:
 			self.size -= 1
@@ -96,7 +96,7 @@ class Array():
 			temp[i] = self.__arr[i]
 
 		for i in range(self.__firstElement + index - 1, self.__lastElement + 1):
-			if temp[i + 1] == None:
+			if i + 1 == self.__firstElement + index:
 				continue
 
 			self.__arr[i] = temp[i + 1]
@@ -184,7 +184,7 @@ class Array():
 		self.__sizeOfBuffer += 100
 		self.__arr += [None] * 100
 
-	
+
 	def __memoryLeak(self, side):
 		if side == "right":
 			i = self.__sizeOfBuffer - 100
