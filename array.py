@@ -169,7 +169,7 @@ class Array():
 		if index < self.__firstElement or index > self.__lastElement:
 			raise IndexError("Out of range")
 
-		self.__arr[index] = item
+		self.__arr[self.__firstElement + index] = item
 
 	
 	def arr(self):
