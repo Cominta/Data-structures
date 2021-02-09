@@ -81,6 +81,12 @@ class Array():
 			self.__lastElement -= 1
 			return
 
+		elif self.__sizeOfBuffer > 100 and 0 - self.__firstElement < -100:
+			self.__memoryLeak("left")
+
+		elif self.__sizeOfBuffer > 100 and self.__sizeOfBuffer - self.__lastElement > 100:
+			self.__memoryLeak("right")
+
 		self.size -= 1
 		self.__lastElement -= 1
 		self.__arr[self.__firstElement + index] = None
