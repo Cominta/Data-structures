@@ -13,6 +13,7 @@
         + [popStart](#arrayPopStart)
         + [index](#arrayIndex)
         + [setIndex](#arraySetIndex)
+		+ [arr](#arrayArr)
     + [Принцип работы](#arrayWork)
 2. [Свявзанный список](#linkedlist)
     + [Методы](#linkedlistMethods)
