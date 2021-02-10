@@ -39,7 +39,7 @@ class Array():
 
 
 	def insert(self, item, index):
-		if index > self.__lastElement + 1 or index < 0:
+		if index > self.__lastElement + 1 - self.__firstElement or index < 0:
 			raise IndexError('Out of range')
 
 		if index == 0 and self.__firstElement != 0:
@@ -66,7 +66,7 @@ class Array():
 
 
 	def delete(self, index):
-		if index > self.__lastElement or index < 0:
+		if index > self.__lastElement - self.__firstElement or index < 0:
 		    raise IndexError('Out of range')
 
 		if index == 0:
@@ -160,13 +160,13 @@ class Array():
 
 
 	def index(self, index):
-		if index < self.__firstElement or index > self.__lastElement:
+		if index < self.__firstElement or index > self.__lastElement - self.__firstElement:
 			raise IndexError("Out of range")
 
 		return self.__arr[self.__firstElement + index]
 
 	def setIndex(self, index, item):
-		if index < self.__firstElement or index > self.__lastElement:
+		if index < self.__firstElement or index > self.__lastElement - self.__firstElement:
 			raise IndexError("Out of range")
 
 		self.__arr[self.__firstElement + index] = item
@@ -361,8 +361,8 @@ def testMemory():
 	print("Test (memory) completed")
 
 
-#testInsert()
-#testDelete()
-#testSearch()
-#testMisc()
-#testMemory()
+testInsert()
+testDelete()
+testSearch()
+testMisc()
+testMemory()
