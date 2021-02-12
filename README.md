@@ -21,7 +21,8 @@
 #### Содержание репозитория  
 + array.py - файл с массивом
 + linkedlist.py - файл со связанным списком
-+ init.py - указывает что это пакет модулей
++ init.py - указывает что это пакет модулей\
+
 # Массив <a name = "array"></a>
 ## Методы <a name = "arrayMethods"></a>
 В этом разделе описываються методы массива (как они работают и какие аргмуенты у них есть)
@@ -39,7 +40,7 @@ def forEach(self, callback):
 ### insert <a name = "arrayInsert"></a>
 ```python
 def insert(self, item, index):
-    if index > self.__lastElement + 1 or index < 0:
+    if index > self.__lastElement + 1 - self.__firstElement or index < 0:
         raise IndexError('Out of range')
     
     if index == 0 and self.__firstElement != 0:
@@ -84,7 +85,7 @@ def search(self, item):
 ### delete <a name = "arrayDelete"></a>
 ```python
 def delete(self, index):
-    if index > self.__lastElement or index < 0:
+    if index > self.__lastElement - self.__firstElement or index < 0:
         raise IndexError('Out of range')
 
     if index == 0:
@@ -239,3 +240,25 @@ def arr(self):
 \
 <b>Как работает</b>\
 Просто запускает цикл в котором добавляет все элементы в временный список и возвращает его
+## Принцип работы <a name = "arrayWork"></a>
+Вам может показатся, что мой массив реализован немного странно.\
+В общем, в целях оптимизации мы заранее выделяем память под новые элементы (буфер)\
+Выглядит это примерно так:
+```
+      -------------------------------------------------
+      |	8 | 9 | 0 | 1 | 3 | None | None | None | None |
+      ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+      |                   |                           |
+       ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+                |                        |
+                ▼                        ▼
+ Массив (который видит пользователь)   Буфер
+```
+\
+Чтобы пользователь не поломал эту систему вся работа с массивом происходит через методы. 
+Чтобы понимать где находится массив среди буфера есть 2 переменные: ```self.__lastElement, self.__firstElement```.
+Если при добавлении элемента не будет места (буфер будет заполнен), то вызывается метод ```self.__newArray()``` который увеличивает буфер.
+При слишком большом количестве свободного места оно удаляется (```self.__memoryLeak()```, может быть название не совсем подходит)
+# Связанный список <a name = "linkedlist"></a>
+## Методы <a name = "linkedlistMethods"></a>
+### insertToTheEnd <a name = "linkedlistInsertToTheEnd"></a>
