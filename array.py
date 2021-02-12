@@ -361,8 +361,8 @@ def testMemory():
 	print("Test (memory) completed")
 
 
-testInsert()
-testDelete()
-testSearch()
-testMisc()
-testMemory()
+#testInsert()
+#testDelete()
+#testSearch()
+#testMisc()
+#testMemory()
