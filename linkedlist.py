@@ -64,15 +64,6 @@ class LinkedList():
 			#self.__checkLoop(result[1])
 			newNode.nextNode = result[0].nextNode
 			result[0].nextNode = newNode
-			'''
-			for i in range(self.__count):
-				if node.item == itemAfter:
-					newNode.nextNode = node.nextNode
-					node.nextNode = newNode
-					break
-
-				node = node.nextNode
-			'''
 
 		else:
 			raise IndexError("List is empty")
