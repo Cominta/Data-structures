@@ -172,6 +172,6 @@ def testPop():
     print("Test (pop) completed", heap.heap())
 
 
-testAdd()
-testSearch()
-testPop()
+#testAdd()
+#testSearch()
+#testPop()
